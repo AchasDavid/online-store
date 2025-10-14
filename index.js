@@ -33,48 +33,59 @@ if (recurso !== 'products') {
 let url = `${URL_BASE}/${recurso}`;
 let opciones = { method: metodoMayus };
 
-if (metodo === 'GET') {
-    if (id) url += `/${id}`
-    
-    fetch(url)
+switch (metodoMayus) {
+    case 'GET':
+        if (id) url += `/${id}`
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => console.log(data));
+        
+        break;
+
+    case 'POST':
+        if (datos.length < 3) {
+            console.error('Error: Faltan argumentos para crear un producto.');
+            console.log('Uso: npm run start POST products Pulsera 300.99 Accesorios');
+            exit(1);
+        }
+
+        const [titulo, precioStr, categoria] = datos;
+        const precio = Number(precioStr);
+
+        if (isNaN(precio)) {
+            console.error('Error: El precio debe ser un número válido.');
+            exit(1);        
+        }
+
+        const producto = { title: `${titulo}`, price: `${precio}`, category: `${categoria}` };
+        opciones.headers = { 'Content-Type': 'application/json' };
+        opciones.body = JSON.stringify(producto);
+
+        fetch(url, opciones)
         .then(response => response.json())
         .then(data => console.log(data));
-}
 
-if (metodo === 'POST') {
-    if (datos.length < 3) {
-        console.error('Error: Faltan argumentos para crear un producto.');
-        console.log('Uso: npm run start POST products Pulsera 300.99 Accesorios');
-        exit(1);
-    }
+        break;
 
-    const [titulo, precioStr, categoria] = datos;
-    const precio = Number(precioStr);
+    case 'DELETE':
+        if (!id) {
+            console.error('Error: El comando DELETE requiere un ID de producto específico.');
+            console.log('Uso: npm run start DELETE products/7')
+            exit(1);        
+        }
 
-    if (isNaN(precio)) {
-        console.error('Error: El precio debe ser un número válido.');
-        exit(1);        
-    }
+        url += `/${id}`
 
-    const producto = { title: `${titulo}`, price: `${precio}`, category: `${categoria}` };
-    opciones.headers = { 'Content-Type': 'application/json' };
-    opciones.body = JSON.stringify(producto);
+        fetch(url, opciones)
+        .then(response => response.json())
+        .then(data => console.log(data));
 
-    fetch(url, opciones)
-    .then(response => response.json())
-    .then(data => console.log(data));
-}
+        break;
 
-if (metodo === 'DELETE') {
-    if (!id) {
-        console.error('Error: El comando DELETE requiere un ID de producto específico.');
-        console.log('Uso: npm run start DELETE products/7')
-        exit(1);        
-    }
-
-    url += `/${id}`
-
-    fetch(url, opciones)
-    .then(response => response.json())
-    .then(data => console.log(data));
+    default:
+        console.error(`Error: se desconoce el método ${metodoMayus}.`);
+        console.log('Métodos válidos: GET, POST, DELETE.');
+        
+        break;
 }
