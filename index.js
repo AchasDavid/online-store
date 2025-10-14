@@ -41,7 +41,7 @@ if (metodo === 'GET') {
         .then(data => console.log(data));
 }
 
-if (metodo == 'POST') {
+if (metodo === 'POST') {
     if (datos.length < 3) {
         console.error('Error: Faltan argumentos para crear un producto.');
         console.log('Uso: npm run start POST products Pulsera 300.99 Accesorios');
@@ -65,7 +65,7 @@ if (metodo == 'POST') {
     .then(data => console.log(data));
 }
 
-if (metodo == 'DELETE') {
+if (metodo === 'DELETE') {
     if (!id) {
         console.error('Error: El comando DELETE requiere un ID de producto específico.');
         console.log('Uso: npm run start DELETE products/7')
