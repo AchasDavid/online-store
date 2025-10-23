@@ -37,10 +37,6 @@ switch (metodoMayus) {
     case 'GET':
         if (id) url += `/${id}`
         
-        fetch(url)
-            .then(response => response.json())
-            .then(data => console.log(data));
-        
         break;
 
     case 'POST':
@@ -62,10 +58,6 @@ switch (metodoMayus) {
         opciones.headers = { 'Content-Type': 'application/json' };
         opciones.body = JSON.stringify(producto);
 
-        fetch(url, opciones)
-        .then(response => response.json())
-        .then(data => console.log(data));
-
         break;
 
     case 'DELETE':
@@ -77,15 +69,26 @@ switch (metodoMayus) {
 
         url += `/${id}`
 
-        fetch(url, opciones)
-        .then(response => response.json())
-        .then(data => console.log(data));
-
         break;
 
     default:
         console.error(`Error: se desconoce el método ${metodoMayus}.`);
         console.log('Métodos válidos: GET, POST, DELETE.');
-        
+        exit(1);
+
         break;
 }
+
+fetch(url, opciones)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Fallo en la respuesta de la solicitud: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log(data))
+    .catch(error => {
+        console.error('Ocurrió un error en la solicitud:');
+        console.error(error.message);
+        exit(1);
+    });
